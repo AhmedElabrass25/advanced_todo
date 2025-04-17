@@ -19,6 +19,7 @@ const todosSlice = createSlice({
         id: Date.now() + Math.random(),
         text: action.payload.text,
         status: action.payload.status,
+        complete: false,
       };
       state.todos = [newTodo, ...state.todos];
       localStorage.setItem("allTodos", JSON.stringify(state.todos));
@@ -46,6 +47,17 @@ const todosSlice = createSlice({
       state.currentFilter = action.payload; // ✅ تحديث الفلتر الحالي
       state.tasksFilter = applyFilter(state.todos, state.currentFilter); // ✅
     },
+    // ============ Complete Todo ==========
+    completeTodo: (state, action) => {
+      const todoIndex = state.todos.findIndex(
+        (todo) => todo.id === action.payload
+      );
+      if (todoIndex !== -1) {
+        state.todos[todoIndex].complete = !state.todos[todoIndex].complete;
+        localStorage.setItem("allTodos", JSON.stringify(state.todos));
+        state.tasksFilter = applyFilter(state.todos, state.currentFilter);
+      }
+    },
     // ============ Clear All Todos ==========
     clearTodos: (state) => {
       state.todos = [];
@@ -56,5 +68,11 @@ const todosSlice = createSlice({
 });
 
 export const todosReducer = todosSlice.reducer;
-export const { addTodo, removeTodo, updateTodo, clearTodos, filterTodos } =
-  todosSlice.actions;
+export const {
+  addTodo,
+  removeTodo,
+  updateTodo,
+  clearTodos,
+  filterTodos,
+  completeTodo,
+} = todosSlice.actions;
